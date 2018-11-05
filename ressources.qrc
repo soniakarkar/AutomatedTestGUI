@@ -1,0 +1,32 @@
+<RCC>
+  <qresource prefix="/icons">
+    <file alias='qnectarcam.png'>icons/qnectarcam.png</file>
+  </qresource>
+  <qresource prefix="/icons">
+    <file alias='tab_icon.png'>icons/tab_icon.png</file>
+  </qresource>
+  <qresource prefix="/icons">
+    <file alias='icon_ok.png'>icons/icon_ok.png</file>
+  </qresource>
+  <qresource prefix="/icons">
+    <file alias='icon_failed.png'>icons/icon_failed.png</file>
+  </qresource>
+   <qresource prefix="/images">
+    <file alias='ScanFeb.jpg'>images/ScanFeb.jpg</file>
+  </qresource>
+   <qresource prefix="/images">
+    <file alias='ConnectSignal.png'>images/ConnectSignal.png</file>
+  </qresource>
+ <qresource prefix="/images">
+    <file alias='ConnectHVPA.png'>images/ConnectHVPA.png</file>
+  </qresource>
+  <qresource prefix="/images">
+     <file alias='DisConnectHVPA.png'>images/DisConnectHVPA.png</file>
+   </qresource>
+   <qresource prefix="/images">
+      <file alias='DisConnectSignal.png'>images/DisConnectSignal.png</file>
+    </qresource>
+    <qresource prefix="/images">
+       <file alias='EjectKey.png'>images/EjectKey.png</file>
+     </qresource>
+</RCC>
