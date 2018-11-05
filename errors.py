@@ -41,7 +41,10 @@ def HandlingType1Error(catchedException):
     dialog = QtGui.QMessageBox()
     dialog.setIcon(QtGui.QMessageBox.Warning)
     dialog.setText("{}".format(catchedException.args[0]) +
-                   "\n Please check this "
+                   "\n Please Checks that the QRcode is in the form "
+                   + "\nObjectTestedid/ObjectTestedversion"
+                   + "\n with ObjectTestedid on 4 digits "
+                   + "\nand ObjectTestedversion = 4"
                    + "\n and start again")
     dialog.DoneButton = dialog.addButton(QtCore.QString("Done"),
                                          QtGui.QMessageBox.AcceptRole)

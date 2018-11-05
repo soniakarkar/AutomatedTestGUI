@@ -1,0 +1,28 @@
+2018-11-05 18:18:47,955 -         TestStucture - ERROR - During 'main' of TestStucture : [Errno 2] No such file or directory: '/home/nectar/2018'  File "./TestStucture.py", line 489, in <module>
+    main(mainargs, testsList)
+  File "./TestStucture.py", line 379, in main
+    os.chdir(Maindatadir)
+None
+2018-11-05 18:19:50,572 -         TestStucture - ERROR - During 'main' of TestStucture : 'module' object has no attribute 'Test1'  File "/home/karkar/AutomatedTestGUI/TestsWidgets.py", line 69, in <lambda>
+    self.done.connect(lambda: ShowTestResult(parent, self.itest))
+  File "/home/karkar/AutomatedTestGUI/TestStucture.py", line 157, in ShowTestResult
+    ResultWigdet = getattr(ShowResult, MainWin.testsList[itest])(MainWin)
+None
+2018-11-05 18:50:12,150 -         TestStucture - ERROR - During 'main' of TestStucture : 'MainWindow' object has no attribute 'ObjectTested'  File "/home/karkar/AutomatedTestGUI/ShowResult.py", line 86, in <lambda>
+    self.itest))
+  File "/home/karkar/AutomatedTestGUI/ShowResult.py", line 50, in PrintResult
+    if((MainWin.ObjectTested is not None)
+None
+2018-11-05 18:52:10,112 -         TestStucture - ERROR - During 'main' of TestStucture : 'MainWindow' object has no attribute 'feb'  File "/home/karkar/AutomatedTestGUI/TestsWidgets.py", line 69, in <lambda>
+    self.done.connect(lambda: ShowTestResult(parent, self.itest))
+  File "/home/karkar/AutomatedTestGUI/TestStucture.py", line 143, in ShowTestResult
+    if MainWin.feb is not None:
+None
+2018-11-05 18:55:05,128 -         TestStucture - ERROR - During 'main' of TestStucture : global name 'MissingInstrumentsError' is not defined  File "/home/karkar/AutomatedTestGUI/TestStucture.py", line 260, in receiveException
+    if type(catchedException)is MissingInstrumentsError:
+None
+2018-11-05 18:56:13,105 -         TestStucture - ERROR - During 'main' of TestStucture : 'MainWindow' object has no attribute 'PS'  File "/home/karkar/AutomatedTestGUI/TestStucture.py", line 179, in <lambda>
+    MainWin))
+  File "/home/karkar/AutomatedTestGUI/TestStucture.py", line 188, in lastAnalysisFinished
+    if MainWin.PS is not None:
+None

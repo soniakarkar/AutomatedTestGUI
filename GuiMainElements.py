@@ -83,10 +83,7 @@ class MainWindow(QtGui.QMainWindow):
 
     def __init__(self, testsList):
         QtGui.QMainWindow.__init__(self)
-        self.feb = None
-        self.lecroy = None
-        self.PS = None
-        self.att = None
+        self.ObjectTested = None
         self.initUI(testsList)
         # sip.setdestroyonexit(False)
 

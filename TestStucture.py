@@ -140,8 +140,9 @@ def ShowTestResult(MainWin, itest):
     """
     log.info("show result for test {}".format(itest))
     log.debug("MainWin {}".format(MainWin))
-    if MainWin.feb is not None:
-        log.debug("MainWin.feb.listentry {}".format(MainWin.feb.listentry))
+    if MainWin.ObjectTested is not None:
+        log.debug("MainWin.ObjectTested.listentry {}".format(
+            MainWin.ObjectTested.listentry))
     # first get rid of the original widget
     MainWin.tabs.widget(itest).layout.removeWidget(
         MainWin.tabs.widget(itest).TestWidget)
@@ -182,10 +183,7 @@ def ShowTestResult(MainWin, itest):
 
 
 def lastAnalysisFinished(MainWin):
-    """Turns off power and create a summary of all tests performed"""
-    # before anything turn off power supply if connected
-    if MainWin.PS is not None:
-        MainWin.PS.AllOFF()
+    """Create a summary of all tests performed"""
     log.info("Last analysis finished")
     totalduration = MainWin.MainTimer.stop()
     log.info("Total Test duration {}".format(totalduration))
@@ -211,7 +209,7 @@ def lastAnalysisFinished(MainWin):
         MainWin.tabs.widget(len(MainWin.testsList)).layout.addWidget(
             QtGui.QLabel(MainWin.ResultTimers[itest]), 2 + itest, 2)
         ResultLabel = QtGui.QLabel()
-        if(MainWin.feb is None) or (not MainWin.feb.results[itest]):
+        if(MainWin.ObjectTested is None) or (not MainWin.ObjectTested.results[itest]):
             ResultLabel.setStyleSheet("background-color: red;"
                                       + "padding: 2px;border-radius: 5px")
             ResultLabel.setText("Problem")
@@ -256,27 +254,12 @@ def receiveException(catchedException):
     log.debug("type(catchedException) {}".format(type(catchedException)))
     log.debug("catchedException.args[0] {}".format(catchedException.args[0]))
     log.error("Received Exception : {}".format(catchedException))
-    if type(catchedException)is MissingInstrumentsError:
+    if type(catchedException)is Type1Error:
         log.debug("exception is : missing instru")
-        HandlingMissingInstrumentsError(catchedException)
-    elif type(catchedException)is MissingXmlFileError:
+        HandlingType1Error(catchedException)
+    elif type(catchedException)is Type2Error:
         log.debug("exception is:  missing xml")
-        HandlingMissingXmlFileError(catchedException)
-    elif type(catchedException)is MissingSignalError:
-        log.debug("exception is:  missing signal")
-        HandlingMissingSignalError(catchedException)
-    elif type(catchedException)is MissingDrawerError:
-        log.debug("exception is:  missing drawer")
-        HandlingMissingDrawerError(catchedException)
-    elif type(catchedException)is BoardPowerError:
-        log.debug("exception is:  wrong power")
-        HandlingBoardPowerError(catchedException)
-    elif type(catchedException)is BadFEBIdError:
-        log.debug("exception is:  bad scanned FEB ID")
-        HandlingBadFEBIdError(catchedException)
-    elif type(catchedException)is CheckError:
-        log.debug("exception is:  check error from NMC")
-        HandlingCheckError(catchedException)
+        HandlingType2Error(catchedException)
     else:
         raise
 
@@ -461,11 +444,11 @@ if __name__ == '__main__':
     parser.add('-f', '--config', required=False,
                is_config_file=True, help='config file path')
     parser.add("-xml", "--xmlFile",
-               default='/home/nectar/Desktop/defaultFEBTest.xml',
+               default='./defaultConfigFile.xml',
                required=False,
                help="provide a xml file for configuration")
     parser.add("-d", "--datadir", required=False,
-               default='/home/nectar/2018',
+               default='.',
                help="provide a main datadir "
                + "Using '%default' by default.")
     parser.add('--skippList', nargs='+', required=False,

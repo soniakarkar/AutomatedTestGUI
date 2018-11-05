@@ -136,7 +136,7 @@ class Test1(QtGui.QWidget):
         self.myWin.TestTimers[self.itest] = duration
         self.done.emit()
 
-    def giveFEBNumber(self):
+    def giveObjectTestedNumber(self):
         """uses the qt signal/slot mechanism to communicate across threads"""
         self.QRCode.emit(QtCore.QString(self.QRCodefield))
 
@@ -152,13 +152,13 @@ class Test1(QtGui.QWidget):
         QtGui.QColor, getDiagBackColor, setDiagBackColor)
 
 
-class NF(QtGui.QWidget):
+class Test2(QtGui.QWidget):
 
     done = QtCore.pyqtSignal()
     datadir = QtCore.pyqtSignal(QtCore.QString)
 
     def __init__(self, parent):
-        super(NF, self).__init__(parent)
+        super(Test2, self).__init__(parent)
         log.debug("creating widget " + str(type(self).__name__))
         self.myWin = parent
         self.itest = self.myWin.testsList.index(str(type(self).__name__))
@@ -181,7 +181,7 @@ class NF(QtGui.QWidget):
             # Prevent stopping the test while connecting to instruments
             self.myWin.tabs.widget(
                 self.itest).StopThisTestBtn.setEnabled(False)
-            (lin, nmcserver, nmc) = self.myWin.feb.prepareForNF(
+            (lin, nmcserver, nmc) = self.myWin.feb.prepareForTest2(
                 self.myWin.PS,
                 self.myWin.lecroy,
                 self.myWin.feb.prefix + "/NF/NF.cfg",
@@ -189,13 +189,12 @@ class NF(QtGui.QWidget):
                 self.myWin.args.URLOPCUAServer)
             # allow stopping while in main loop
             self.myWin.tabs.widget(self.itest).StopThisTestBtn.setEnabled(True)
-            self.myWin.feb.mainNFLoop(lin, nmc)
+            self.myWin.feb.mainTest2Loop(lin, nmc)
             # prevent stopping while cleaning connections
             self.myWin.tabs.widget(
                 self.itest).StopThisTestBtn.setEnabled(False)
-            self.NFdatadir = self.myWin.feb.cleanAfterNF(
-                lin, self.myWin.PS, self.myWin.lecroy, nmc, nmcserver)
-            log.info("NF Data in {} ".format(self.NFdatadir))
+            self.Test2datadir = ""
+            log.info("Test2 Data in {} ".format(self.Test2datadir))
             duration = self.timer.stop()
             log.debug("this test took {} ".format(duration))
             self.myWin.TestTimers[self.itest] = duration
@@ -207,7 +206,7 @@ class NF(QtGui.QWidget):
             raise
 
     def giveDatadir(self):
-        self.datadir.emit(QtCore.QString(self.NFdatadir))
+        self.datadir.emit(QtCore.QString(self.Test2datadir))
 
     def SafeExit(self):
         # close files
