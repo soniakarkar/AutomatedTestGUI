@@ -3,15 +3,12 @@
 """
 :Author: Sonia Karkar -- karkar@in2p3.fr
 
-:What:
+:What: Afew ancillary class and functions for the Testbench to run
 
 """
 import pandas as pd
 from __builtin__ import str
-from ConfigParser import ConfigParser
-import subprocess
 import os
-import sys
 from LogUtils import MyLog
 if __name__ == "__main__":
     logname = os.path.basename(__file__)[:-3]
@@ -20,8 +17,8 @@ else:
 if len(logname) > 20:
     logname = logname[:9] + "--" + logname[-9:]
 log = MyLog(logname, qt=True, logdir=os.getenv("HOME") + "/log/")
-import logging
-log.setLevel(logging.DEBUG)
+# import logging
+# log.setLevel(logging.DEBUG)
 
 
 def ParseQRCode(QRCode, currentVersion=4):
@@ -60,7 +57,7 @@ def PrepareTests(Objectid):
 
 class MyObject:
     '''
-    class used to manage feb tests and upload of result to db
+    class used to manage tests and upload of result to db via pandas dataframe
 
     '''
 
@@ -83,15 +80,15 @@ class MyObject:
         # default test and  config dataframes
         self.Tests = pd.DataFrame({'SerialNB': [self.id],
                                    'LastModif': [pd.Timestamp.now()]},
-                                  columns=['FEBSerialNB',
+                                  columns=['SerialNB',
                                            'LastModif'])
         self.Config = pd.DataFrame({'SerialNB': [self.id],
                                     'LastModif': [pd.Timestamp.now()]},
-                                   columns=['FEBSerialNB',
+                                   columns=['SerialNB',
                                             'LastModif'])
 
     def __repr__(self):
         toprint = "Serial number :" + str(self.id) + "\n"
-        toprint = toprint + "Test data :" + "\n" + str(self.FebTests) + "\n"
-        toprint = toprint + "Config data :" + "\n" + str(self.FebConfig)
+        toprint = toprint + "Test data :" + "\n" + str(self.Tests) + "\n"
+        toprint = toprint + "Config data :" + "\n" + str(self.Config)
         return toprint

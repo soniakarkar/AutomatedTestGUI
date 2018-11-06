@@ -7,14 +7,13 @@
 
 """
 from PyQt4 import QtGui, QtCore
-import numpy as np
 import ShowResult
 import ressources
-from ConfigParser import ConfigParser
 from qtUtils import WidgetTimer, centerOnScreen, BlinkingInputDialog
 # import analyseL0PedScan
 import os
 import subprocess
+import TakeDataTest1
 from TestStucture import ShowTestResult
 from LogUtils import MyLog
 if __name__ == "__main__":
@@ -48,7 +47,7 @@ def CreateWidgetLabel(widget):
     return instructionLabel, grid
 
 
-class Test1(QtGui.QWidget):
+class Test0(QtGui.QWidget):
     """
     Widget used by TestStucture.py as part of the MainWindow.
     The Run() method of this widget ask the user to enter some input
@@ -60,42 +59,29 @@ class Test1(QtGui.QWidget):
     QRCode = QtCore.pyqtSignal(QtCore.QString)
 
     def __init__(self, parent):
-        super(Test1, self).__init__(parent)
+        super(Test0, self).__init__(parent)
         log.debug("creating widget " + str(type(self).__name__))
         log.debug("parent {}".format(parent))
         self.myWin = parent
-        self.itest = self.myWin.testsList.index("Test1")
+        self.itest = self.myWin.testsList.index("Test0")
         log.debug("self.myWin {}".format(self.myWin))
         self.done.connect(lambda: ShowTestResult(parent, self.itest))
         log.debug("just connected self.done {}".format(self.done))
         self.initUI()
 
-    # this is used to be able to make the dialog window blink
-    # by changing its background color via the QPropertyAnimation
-    def getDiagBackColor(self):
-        return self.dialog.palette().color(QtGui.QPalette.Background)
-
-    def setDiagBackColor(self, color):
-        pal = self.dialog.palette()
-        pal.setColor(QtGui.QPalette.Background, color)
-        self.dialog.setPalette(pal)
-
     def initUI(self):
-
         log.debug("initUI Widget" + str(type(self).__name__))
         self.instructionLabel, self.Gridlayout = CreateWidgetLabel(self)
         self.timer = WidgetTimer("in " + logname + str(type(self).__name__))
         self.Gridlayout.addWidget(self.timer)
         self.imageLabel = QtGui.QLabel()
         self.imageLabel.setPixmap(QtGui.QPixmap(":/images/ScanFeb.jpg"))
-        # self.Gridlayout.addWidget(self.imageLabel)
 
-        self.dialog = QtGui.QInputDialog(self)
+        self.dialog = BlinkingInputDialog()
+        self.dialog.startBlink(color1=QtGui.QColor(188, 16, 16),
+                               color2=QtGui.QColor(229, 131, 2))
         self.dialog.setWindowTitle(str(type(self).__name__))
         centerOnScreen(self.dialog)
-        # geom = self.dialog.geometry()
-        # geom.moveCenter(self.myWin.frameGeometry().center())
-        # self.dialog.move(geom.center())
         self.dialog.setLabelText("Please enter some input")
         self.dialog.setOkButtonText("Use this input")
 
@@ -103,16 +89,6 @@ class Test1(QtGui.QWidget):
         layout.addWidget(self.imageLabel)
 
         self.dialog.accepted.connect(self.mybuttonClicked)
-
-        color1 = QtGui.QColor(188, 16, 16)
-        color2 = QtGui.QColor(229, 131, 2)
-        self.color_anim = QtCore.QPropertyAnimation(self, 'DialogBackColor')
-        self.color_anim.setStartValue(color2)
-        self.color_anim.setKeyValueAt(0.3, color1)
-        self.color_anim.setEndValue(color1)
-        self.color_anim.setDuration(800)
-        self.color_anim.setLoopCount(-1)
-        self.color_anim.start()
 
     def Run(self):
         try:
@@ -142,23 +118,18 @@ class Test1(QtGui.QWidget):
 
     def SafeExit(self):
         """Does whatever needs to be done with the testbench to exit safely
-        an exemple of action could be to turn off the power supply
+        an exemple is to turn off the power supply
         and disconnect from all instruments"""
         pass
 
-    # this is used to be able to make the dialog window blink
-    # by changing its background color via the QPropertyAnimation
-    DialogBackColor = QtCore.pyqtProperty(
-        QtGui.QColor, getDiagBackColor, setDiagBackColor)
 
-
-class Test2(QtGui.QWidget):
+class Test1(QtGui.QWidget):
 
     done = QtCore.pyqtSignal()
     datadir = QtCore.pyqtSignal(QtCore.QString)
 
     def __init__(self, parent):
-        super(Test2, self).__init__(parent)
+        super(Test1, self).__init__(parent)
         log.debug("creating widget " + str(type(self).__name__))
         self.myWin = parent
         self.itest = self.myWin.testsList.index(str(type(self).__name__))
@@ -181,20 +152,15 @@ class Test2(QtGui.QWidget):
             # Prevent stopping the test while connecting to instruments
             self.myWin.tabs.widget(
                 self.itest).StopThisTestBtn.setEnabled(False)
-            (lin, nmcserver, nmc) = self.myWin.feb.prepareForTest2(
-                self.myWin.PS,
-                self.myWin.lecroy,
-                self.myWin.feb.prefix + "/NF/NF.cfg",
-                self.myWin.args.OPCUAServerExe,
-                self.myWin.args.URLOPCUAServer)
+            self.myWin.ObjectTested.prepareForTest1()
             # allow stopping while in main loop
             self.myWin.tabs.widget(self.itest).StopThisTestBtn.setEnabled(True)
-            self.myWin.feb.mainTest2Loop(lin, nmc)
+            self.myWin.ObjectTested.mainTest1Loop()
             # prevent stopping while cleaning connections
             self.myWin.tabs.widget(
                 self.itest).StopThisTestBtn.setEnabled(False)
-            self.Test2datadir = ""
-            log.info("Test2 Data in {} ".format(self.Test2datadir))
+            self.Test1datadir = self.myWin.ObjectTested.cleanAfterTest1()
+            log.info("Test1 Data in {} ".format(self.Test1datadir))
             duration = self.timer.stop()
             log.debug("this test took {} ".format(duration))
             self.myWin.TestTimers[self.itest] = duration
@@ -206,28 +172,18 @@ class Test2(QtGui.QWidget):
             raise
 
     def giveDatadir(self):
-        self.datadir.emit(QtCore.QString(self.Test2datadir))
+        self.datadir.emit(QtCore.QString(self.Test1datadir))
 
     def SafeExit(self):
-        # close files
-        try:
-            self.reportfile.close()
-        except:
-            pass
-        # disconnect from instruments and FEB
-        for instrument in [self.myWin.PS, self.myWin.lecroy, self.myWin.att]:
-            try:
-                instrument.realClose()
-            except:
-                log.error("couldnt clean connexion to {}".format(instrument))
+        pass
 
 
-class ConnectHVPA(QtGui.QWidget):
+class Test3(QtGui.QWidget):
 
     done = QtCore.pyqtSignal()
 
     def __init__(self, parent):
-        super(ConnectHVPA, self).__init__(parent)
+        super(Test3, self).__init__(parent)
         log.debug("creating widget " + str(type(self).__name__))
         self.myWin = parent
         self.itest = self.myWin.testsList.index(str(type(self).__name__))

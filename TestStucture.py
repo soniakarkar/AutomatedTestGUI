@@ -1,3 +1,4 @@
+# !/usr/bin/env python
 # coding:utf-8
 """
 :Author: Sonia Karkar -- karkar@in2p3.fr
@@ -25,6 +26,21 @@
 import sys
 import os
 import traceback
+from LogUtils import MyLog
+if __name__ == "__main__":
+    logname = os.path.basename(__file__)[:-3]
+else:
+    logname = __name__
+    if len(logname) > 20:
+        logname = logname[:9] + "--" + logname[-9:]
+# Create a logger with file, console and qt widget printing
+logdir = os.getenv("HOME") + "/log/"
+if not (os.path.isdir(logdir)):
+    os.mkdir(logdir)
+log = MyLog(logname, qt=True, logdir=logdir)
+import logging
+# default logging level is INFO uncomment below for DEBUG
+# log.setLevel(logging.DEBUG)
 from errors import Type1Error, HandlingType1Error
 from errors import Type2Error, HandlingType2Error
 from PyQt4 import QtGui, QtCore
@@ -37,18 +53,6 @@ from qtUtils import Worker, centerOnScreen
 from qtUtils import wait_signal
 from GuiMainElements import MainWindow, addTestRestart
 from GuiMainElements import getTestListwin
-from LogUtils import MyLog
-if __name__ == "__main__":
-    logname = os.path.basename(__file__)[:-3]
-else:
-    logname = __name__
-if len(logname) > 20:
-    logname = logname[:9] + "--" + logname[-9:]
-# Create a logger with file, console and qt widget printing
-log = MyLog(logname, qt=True, logdir=os.getenv("HOME") + "/log/")
-import logging
-# default logging level is INFO uncomment below for DEBUG
-# log.setLevel(logging.DEBUG)
 
 
 def StopTest(MainWin, itest):
@@ -236,13 +240,6 @@ def lastAnalysisFinished(MainWin):
     log.info("{}".format(MainWin.testsList))
     log.info("Summary Tests durations {}".format(MainWin.TestTimers))
     log.info("Summary analysis durations {}".format(MainWin.ResultTimers))
-    try:
-        log.debug("Disconnecting instruments")
-        MainWin.PS.abortiveClose()
-        MainWin.lecroy.abortiveClose()
-        MainWin.att.abortiveClose()
-    except:
-        pass
 
 
 def receiveException(catchedException):
@@ -252,7 +249,7 @@ def receiveException(catchedException):
      """
     log.debug("catchedException {}".format(catchedException))
     log.debug("type(catchedException) {}".format(type(catchedException)))
-    log.debug("catchedException.args[0] {}".format(catchedException.args[0]))
+    log.debug("catchedException.args {}".format(catchedException.args))
     log.error("Received Exception : {}".format(catchedException))
     if type(catchedException)is Type1Error:
         log.debug("exception is : missing instru")
@@ -462,9 +459,9 @@ if __name__ == '__main__':
     log.debug(mainargs)
     log.debug(mainargs.skippList)
     testsList = [
+        "Test0",
         "Test1",
         # "Test2",
-        # "Test3",
     ]
     if mainargs.skippList is not None:
         testsList = [x for x in testsList if x not in mainargs.skippList]

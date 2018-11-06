@@ -11,11 +11,10 @@ from PyQt4 import QtGui, QtCore
 # from PyQt4.QtCore import pyqtSlot
 import os
 from errors import Type1Error, Type2Error
-import subprocess
-from ConfigParser import ConfigParser
 import numpy as np
 from TestUtils import PrepareTests, ParseQRCode
 import TestsWidgets
+import analyseTest1
 from qtUtils import Worker, ImageViewer, WidgetTimer
 from TestStucture import RunTest
 from argparse import Namespace
@@ -67,11 +66,11 @@ def PrintResult(ResultLabel, MainWin, printresult, itest):
     # sb.setValue(sb.maximum())
 
 
-class Test1(QtGui.QWidget):
+class Test0(QtGui.QWidget):
     PrintResultSig = QtCore.pyqtSignal()
 
     def __init__(self, parent):
-        super(Test1, self).__init__(parent)
+        super(Test0, self).__init__(parent)
         log.debug("creating Result Widget " + str(type(self).__name__))
         self.myWin = parent
         log.debug("myWin {}".format(self.myWin))
@@ -141,3 +140,74 @@ class Test1(QtGui.QWidget):
 
     def SafeExit(self):
         pass
+
+
+class Test1(QtGui.QWidget):
+    PrintResultSig = QtCore.pyqtSignal()
+
+    def __init__(self, parent):
+        super(Test1, self).__init__(parent)
+        log.debug("creating Result Widget " + str(type(self).__name__))
+        log.debug("parent {}".format(parent))
+        self.myWin = parent
+        self.itest = self.myWin.testsList.index(str(type(self).__name__))
+        testwidget = self.myWin.tabs.widget(self.itest).TestWidget
+        testwidget.datadir.connect(self.receiveDatadir)
+        testwidget.giveDatadir()
+        log.debug("self.Test1datadir {}".format(self.Test1datadir))
+        self.PrintResultSig.connect(lambda: PrintResult(self.resultLabel,
+                                                        self.myWin,
+                                                        self.printresult,
+                                                        self.itest))
+        self.initUI()
+
+    def initUI(self):
+        log.debug("initUI result Widget " + str(type(self).__name__))
+        self.resultLabel, self.layout = CreateResultlabel(self)
+        self.timer = WidgetTimer("in " + logname + str(type(self).__name__))
+        self.layout.addWidget(self.timer)
+        self.displayImage = ImageViewer(QtCore.QSize(1000, 600))
+        self.layout.addWidget(self.displayImage, 1, 1)
+
+    def Run(self):
+        try:
+            self.timer.start()
+            log.info("Starting to analyse Test1 Data")
+            a, Result = self.myWin.ObjectTested.analyseTest1(self.Test1datadir)
+            log.debug("%s, %s", a, Result)
+            try:
+                reportfile = open(self.Test1datadir + "/"
+                                  + "analyseTest1_report.txt", "r")
+            except Exception:
+                log.error("couldnt open report file : %s", self.Test1datadir
+                          + "/" + "analyseTest1_report.txt")
+            log.debug("%s", reportfile)
+            self.printresult = ""
+            for line in reportfile.readlines():
+                self.printresult += line
+
+            for col in self.myWin.ObjectTested.Tests.columns:
+                self.printresult += "\n {} {}".format(
+                    self.myWin.ObjectTested.Tests[col].name,
+                    self.myWin.ObjectTested.Tests[col].values
+                )
+            self.myWin.ObjectTested.results[self.itest] = Result
+            if not Result:
+                self.myWin.StopAfterShow = True
+            self.PrintResultSig.emit()
+            self.displayImage.setDirectory("plots")
+            self.displayImage.update()
+            duration = self.timer.stop()
+            log.debug("this test took {} ".format(duration))
+            self.myWin.ResultTimers[self.itest] = duration
+        except Exception as err:
+            mymsg = ("{}".format(err.args[0]))
+            log.error(mymsg)
+            self.SafeExit()
+            raise Exception(mymsg)
+
+    def SafeExit(self):
+        pass
+
+    def receiveDatadir(self, datadir):
+        self.Test1datadir = str(datadir)

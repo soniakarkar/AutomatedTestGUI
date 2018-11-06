@@ -127,7 +127,7 @@ class LogWin(QtGui.QTextEdit):
 
 if __name__ == '__main__':
 
-    log = MyLog(logname, qt = True, logdir = os.getenv("HOME")+"/log/")
+    log = MyLog(logname, qt=True, logdir=os.getenv("HOME") + "/log/")
     log.info("log created")
     app = QtGui.QApplication(sys.argv)
     logwin = LogWin(app)
