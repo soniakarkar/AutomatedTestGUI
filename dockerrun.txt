@@ -1,5 +1,5 @@
 # docker image is posted at 
-docker.io/soka/autotest
+https://hub.docker.com/r/soka/autotest/
 
 
 # because of GUI some tricks are needed to run the docker. one UNSAFE possibility is: 
