@@ -1,3 +1,8 @@
+# docker image is posted at 
+docker.io/soka/autotest
+
+
+# because of GUI some tricks are needed to run the docker. one UNSAFE possibility is: 
 xhost +local:root
-docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --env QT_X11_NO_MITSHM=1 autotest
+docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --env QT_X11_NO_MITSHM=1 soka/autotest:v0
 xhost -local:root
