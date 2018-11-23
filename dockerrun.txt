@@ -1,5 +1,10 @@
 # docker image is posted at 
-https://hub.docker.com/r/soka/autotest/
+# https://hub.docker.com/r/soka/autotest/
+# !!! you need to use version tags to pull/run see here the list of tags avalaible:
+# https://hub.docker.com/r/soka/autotest/tags/
+# trying to pull the image with no tag will result in error about inexistent tag "latest"
+# see detailed explanation here :
+# https://medium.com/@mccode/the-misunderstood-docker-tag-latest-af3babfd6375
 
 
 # because of GUI some tricks are needed to run the docker. one UNSAFE possibility is: 
