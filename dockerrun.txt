@@ -7,7 +7,13 @@
 # https://medium.com/@mccode/the-misunderstood-docker-tag-latest-af3babfd6375
 
 
-# because of GUI some tricks are needed to run the docker. one UNSAFE possibility is: 
+# because of GUI some tricks are needed to run the docker. 
+
+# this set of options seems to do the trick on Linux host :
+docker run --rm -it --network host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --device=/dev/dri:/dev/dri --privileged -v /home/$USER/tmp/docker/autotest:/shared --env QT_X11_NO_MITSHM=1 soka/autotest:v0
+
+
+# one UNSAFE possibility is: 
 xhost +local:root
 docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --env QT_X11_NO_MITSHM=1 soka/autotest:v0
 xhost -local:root
