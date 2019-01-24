@@ -14,6 +14,6 @@ docker run --rm -it --network host -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X
 
 
 # one UNSAFE possibility is: 
-xhost +local:root
+xhost +local:
 docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:ro --env QT_X11_NO_MITSHM=1 soka/autotest:v0
-xhost -local:root
+xhost -local:
